@@ -35,3 +35,8 @@ This project implements a document similarity matching system in Java. It uses T
    ```bash
    git clone https://github.com/yourusername/document-similarity.git
    cd document-similarity
+
+### License
+  
+This setup should give you a basic but solid foundation for a document similarity matching system. Feel free to extend or modify it as needed!
+
