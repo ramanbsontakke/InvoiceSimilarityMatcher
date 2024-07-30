@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Similarity Matcher</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            transition: transform 0.3s ease;
+        }
+        .container:hover {
+            transform: translateY(-10px);
+        }
+        .file-input {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .file-input label {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .file-input input[type="file"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .file-input input[type="file"]:hover {
+            background-color: #f0f0f0;
+        }
+        .output {
+            margin-top: 20px;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+            background-color: #fafafa;
+            border-radius: 5px;
+        }
+        .output h2 {
+            margin-top: 0;
+            font-size: 1.5em;
+            color: #555;
+        }
+        .output p {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload Invoice</h1>
+        <form id="uploadForm" enctype="multipart/form-data">
+            <div class="file-input">
+                <label for="fileInput">Choose Invoice PDF:</label>
+                <input type="file" id="fileInput" name="file" accept="application/pdf" required>
+            </div>
+            <button type="submit">Upload</button>
+        </form>
+        <div class="output">
+            <h2>Result:</h2>
+            <p id="result">No results yet.</p>
+        </div>
+    </div>
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fileInput = document.getElementById('fileInput');
+            if (!fileInput.files.length) {
+                alert('Please select a file to upload.');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const result = await response.json();
+                document.getElementById('result').textContent = `Most similar invoice: ${result.similarInvoice}, Similarity score: ${result.similarityScore}`;
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('result').textContent = 'Error uploading file. Please try again.';
+            }
+        });
+    </script>
+</body>
+</html>
